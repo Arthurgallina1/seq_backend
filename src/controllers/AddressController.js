@@ -20,7 +20,6 @@ module.exports = {
     async store(req, res) {
         try {
             const { user_id } = req.params;
-            console.debug("usder", user_id);
             const { zipcode, street, number } = req.body;
 
             const user = await User.findByPk(user_id);

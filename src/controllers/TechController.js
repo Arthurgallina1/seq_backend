@@ -2,7 +2,15 @@ const Tech = require("../models/Tech");
 const User = require("../models/User");
 
 module.exports = {
-    async index(req, res) {},
+    async index(req, res) {
+        const { user_id } = req.params;
+
+        const user = await User.findByPk(user_id, {
+            include: { association: "techs", through: { attributes: [] } },
+        });
+
+        return res.json(user);
+    },
 
     async store(req, res) {
         try {
@@ -18,7 +26,27 @@ module.exports = {
             });
 
             await user.addTech(tech);
-            return res.status(200).json(tech);
+            return res.status(201).json(tech);
+        } catch (err) {
+            return res.status(500).json(err);
+        }
+    },
+
+    async delete(req, res) {
+        try {
+            const { user_id } = req.params;
+            const { name } = req.body;
+
+            const user = await User.findByPk(user_id);
+            if (!user) {
+                return res.status(400).json({ error: "user not found" });
+            }
+            const tech = await Tech.findOne({
+                where: { name },
+            });
+
+            await user.removeTech(tech);
+            return res.status(200).json();
         } catch (err) {
             return res.status(500).json(err);
         }
