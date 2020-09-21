@@ -11,7 +11,7 @@ module.exports = {
             if (!user) {
                 return res.status(400).json({ error: "user not found" });
             }
-            return res.status(200).json(user);
+            return res.status(200).json(user.addresses);
         } catch (error) {
             return res.status(500).json(error);
         }
