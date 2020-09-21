@@ -2,6 +2,21 @@ const Address = require("../models/Address");
 const User = require("../models/User");
 
 module.exports = {
+    async index(req, res) {
+        try {
+            const { user_id } = req.params;
+            const user = await User.findByPk(user_id, {
+                include: { association: "addresses" },
+            });
+            if (!user) {
+                return res.status(400).json({ error: "user not found" });
+            }
+            return res.status(200).json(user);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    },
+
     async store(req, res) {
         try {
             const { user_id } = req.params;
@@ -19,16 +34,10 @@ module.exports = {
                 street,
                 number,
             });
-            return res.json(address);
+            return res.status(201).json(address);
         } catch (err) {
             console.log(err);
             return res.status(500).json(err);
         }
-    },
-
-    async index(req, res) {
-        const users = await Address.findAll();
-
-        return res.status(500).json(users);
     },
 };
